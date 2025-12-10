@@ -1,122 +1,240 @@
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { Trip, Party, Broker, Payment, PartyType, UserRole } from '../types';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { Trip, Party, Broker, Payment, PartyType, UserRole, Owner, Labour, ProductReceive } from '../types';
 
 interface DataContextProps {
-    trips: Trip[];
-    parties: Party[];
-    brokers: Broker[];
-    payments: Payment[];
-    userRole: UserRole;
-    addTrip: (trip: Omit<Trip, 'id' | 'serialNumber'>) => void;
-    updateTrip: (trip: Trip) => void;
-    deleteTrip: (id: string) => void;
-    addParty: (party: Omit<Party, 'id'>) => void;
-    updateParty: (party: Party) => void;
-    deleteParty: (id: string) => void;
-    addBroker: (broker: Omit<Broker, 'id'>) => void;
-    updateBroker: (broker: Broker) => void;
-    deleteBroker: (id: string) => void;
-    addPayment: (payment: Omit<Payment, 'id'>) => void;
-    deletePayment: (id: string) => void;
-    setUserRole: (role: UserRole) => void;
+     trips: Trip[];
+     parties: Party[];
+     brokers: Broker[];
+     payments: Payment[];
+     owners: Owner[];
+     labours: Labour[];
+     productReceives: ProductReceive[];
+     userRole: UserRole;
+     loading: boolean;
+     addTrip: (trip: Omit<Trip, 'id' | 'serialNumber'>) => Promise<void>;
+     updateTrip: (trip: Trip) => Promise<void>;
+     deleteTrip: (id: string) => Promise<void>;
+     addParty: (party: Omit<Party, 'id'>) => Promise<void>;
+     updateParty: (party: Party) => Promise<void>;
+     deleteParty: (id: string) => Promise<void>;
+     addBroker: (broker: Omit<Broker, 'id'>) => Promise<void>;
+     updateBroker: (broker: Broker) => Promise<void>;
+     deleteBroker: (id: string) => Promise<void>;
+     addPayment: (payment: Omit<Payment, 'id'>) => Promise<void>;
+     deletePayment: (id: string) => Promise<void>;
+     addOwner: (owner: Omit<Owner, 'id'>) => Promise<void>;
+     updateOwner: (owner: Owner) => Promise<void>;
+     deleteOwner: (id: string) => Promise<void>;
+     addLabour: (labour: Omit<Labour, 'id'>) => Promise<void>;
+     updateLabour: (labour: Labour) => Promise<void>;
+     deleteLabour: (id: string) => Promise<void>;
+     addProductReceive: (productReceive: Omit<ProductReceive, 'id'>) => Promise<void>;
+     updateProductReceive: (productReceive: ProductReceive) => Promise<void>;
+     deleteProductReceive: (id: string) => Promise<void>;
+     setUserRole: (role: UserRole) => void;
+     refreshData: () => Promise<void>;
 }
 
 const DataContext = createContext<DataContextProps | undefined>(undefined);
 
-const initialParties: Party[] = [
-    { id: 'p1', name: 'Global Exports Inc.', type: PartyType.REGULAR, contact: '555-1234', address: '123 Export Lane', outstandingBalance: 150000 },
-    { id: 'p2', name: 'Local Goods Co.', type: PartyType.REGULAR, contact: '555-5678', address: '456 Market St', outstandingBalance: 75000 },
-    { id: 'p3', name: 'One-Time Shipment', type: PartyType.ONETIME, contact: '555-8765', address: '789 Warehouse Ave', outstandingBalance: 0 },
-];
-
-const initialBrokers: Broker[] = [
-    { id: 'b1', name: 'Al-Fatah Goods Carrier', commission: 5, contact: '0300-1234567', station: 'North Hub' },
-    { id: 'b2', name: 'Madina Cargo Services', commission: 4.5, contact: '0321-7654321', station: 'South Terminal' },
-];
-
-const initialPayments: Payment[] = [
-    { id: 'p1', date: '2023-10-28', type: 'paid', entityType: 'broker', entityName: 'Al-Fatah Goods Carrier', amount: 2500, description: 'Partial payment for commission', reference: 'Trip #1001' },
-    { id: 'p2', date: '2023-10-29', type: 'received', entityType: 'party', entityName: 'Global Exports Inc.', amount: 50000, description: 'Partial payment for freight', reference: 'Trip #1001' },
-];
-
-const initialTrips: Trip[] = [
-    { id: 't1', serialNumber: 1001, driverNumber: 'D-456', date: '2023-10-26', vehicleNumber: 'TR-12345', vehicleSize: '40ft', weight: 25, freight: 120000, officeFare: 5000, vehicleReceivedBilty: 110000, vehicleFare: 100000, laborCharges: 2000, exciseCharges: 1500, bonus: 1000, miscExpenses: 500, dailyWages: 800, extraWeight: 2, partyBalance: 10000, partyReceived: 110000, brokerageCommission: 5500, vehicleBalance: 5000, vehicleAccount: 'AC-V1', additionalDetails: 'Handle with care', station: 'North Hub', brokerName: 'Al-Fatah Goods Carrier', partyName: 'Global Exports Inc.', mt: 25 },
-    { id: 't2', serialNumber: 1002, driverNumber: 'D-789', date: '2023-10-27', vehicleNumber: 'TR-67890', vehicleSize: '20ft', weight: 15, freight: 80000, officeFare: 3000, vehicleReceivedBilty: 75000, vehicleFare: 70000, laborCharges: 1500, exciseCharges: 1000, bonus: 500, miscExpenses: 300, dailyWages: 800, extraWeight: 1, partyBalance: 5000, partyReceived: 75000, brokerageCommission: 3375, vehicleBalance: 2000, vehicleAccount: 'AC-V2', additionalDetails: 'Urgent delivery', station: 'South Terminal', brokerName: 'Madina Cargo Services', partyName: 'Local Goods Co.', mt: 15 },
-];
+const API_BASE_URL = 'http://localhost:5000/api';
 
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [trips, setTrips] = useState<Trip[]>(initialTrips);
-    const [parties, setParties] = useState<Party[]>(initialParties);
-    const [brokers, setBrokers] = useState<Broker[]>(initialBrokers);
-    const [payments, setPayments] = useState<Payment[]>(initialPayments);
-    const [userRole, setUserRole] = useState<UserRole>('Admin');
+     const [trips, setTrips] = useState<Trip[]>([]);
+     const [parties, setParties] = useState<Party[]>([]);
+     const [brokers, setBrokers] = useState<Broker[]>([]);
+     const [payments, setPayments] = useState<Payment[]>([]);
+     const [owners, setOwners] = useState<Owner[]>([]);
+     const [labours, setLabours] = useState<Labour[]>([]);
+     const [productReceives, setProductReceives] = useState<ProductReceive[]>([]);
+     const [userRole, setUserRole] = useState<UserRole>('Admin');
+     const [loading, setLoading] = useState<boolean>(true);
 
-    const addTrip = (trip: Omit<Trip, 'id' | 'serialNumber'>) => {
-        const newTrip: Trip = {
-            ...trip,
-            id: `t${Date.now()}`,
-            serialNumber: (trips.length > 0 ? Math.max(...trips.map(t => t.serialNumber)) : 1000) + 1,
-        };
-        setTrips(prev => [newTrip, ...prev]);
-    };
+     // API helper functions
+     const fetchData = async (endpoint: string) => {
+         const response = await fetch(`${API_BASE_URL}${endpoint}`);
+         if (!response.ok) throw new Error(`Failed to fetch ${endpoint}`);
+         return response.json();
+     };
 
-    const updateTrip = (updatedTrip: Trip) => {
-        setTrips(prev => prev.map(trip => trip.id === updatedTrip.id ? updatedTrip : trip));
-    };
+     const postData = async (endpoint: string, data: any) => {
+         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify(data)
+         });
+         if (!response.ok) throw new Error(`Failed to create ${endpoint}`);
+         return response.json();
+     };
 
-    const deleteTrip = (id: string) => {
-        setTrips(prev => prev.filter(trip => trip.id !== id));
-    };
+     const putData = async (endpoint: string, data: any) => {
+         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+             method: 'PUT',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify(data)
+         });
+         if (!response.ok) throw new Error(`Failed to update ${endpoint}`);
+         return response.json();
+     };
+
+     const deleteData = async (endpoint: string) => {
+         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+             method: 'DELETE'
+         });
+         if (!response.ok) throw new Error(`Failed to delete ${endpoint}`);
+         return response.json();
+     };
+
+     const refreshData = async () => {
+         try {
+             setLoading(true);
+             const [tripsData, partiesData, brokersData, paymentsData, ownersData, laboursData, productReceivesData] = await Promise.all([
+                 fetchData('/trips'),
+                 fetchData('/parties'),
+                 fetchData('/brokers'),
+                 fetchData('/payments'),
+                 fetchData('/owners'),
+                 fetchData('/labours'),
+                 fetchData('/productReceives')
+             ]);
+             setTrips(tripsData);
+             setParties(partiesData);
+             setBrokers(brokersData);
+             setPayments(paymentsData);
+             setOwners(ownersData);
+             setLabours(laboursData);
+             setProductReceives(productReceivesData);
+         } catch (error) {
+             console.error('Error loading data:', error);
+         } finally {
+             setLoading(false);
+         }
+     };
+
+     useEffect(() => {
+         refreshData();
+     }, []);
+
+     const addTrip = async (trip: Omit<Trip, 'id' | 'serialNumber'>) => {
+         const newTrip = await postData('/trips', trip);
+         setTrips(prev => [newTrip, ...prev]);
+     };
+
+     const updateTrip = async (updatedTrip: Trip) => {
+         const trip = await putData(`/trips/${updatedTrip._id || updatedTrip.id}`, updatedTrip);
+         setTrips(prev => prev.map(t => (t._id || t.id) === (updatedTrip._id || updatedTrip.id) ? trip : t));
+     };
+
+     const deleteTrip = async (id: string) => {
+         await deleteData(`/trips/${id}`);
+         setTrips(prev => prev.filter(trip => (trip._id || trip.id) !== id));
+     };
     
     // Party Management
-    const addParty = (party: Omit<Party, 'id'>) => {
-        const newParty: Party = { ...party, id: `p${Date.now()}`};
+    const addParty = async (party: Omit<Party, 'id'>) => {
+        const newParty = await postData('/parties', party);
         setParties(prev => [newParty, ...prev]);
     };
 
-    const updateParty = (updatedParty: Party) => {
-        setParties(prev => prev.map(party => party.id === updatedParty.id ? updatedParty : party));
+    const updateParty = async (updatedParty: Party) => {
+        const party = await putData(`/parties/${updatedParty._id || updatedParty.id}`, updatedParty);
+        setParties(prev => prev.map(p => (p._id || p.id) === (updatedParty._id || updatedParty.id) ? party : p));
     };
 
-    const deleteParty = (id: string) => {
-        setParties(prev => prev.filter(party => party.id !== id));
+    const deleteParty = async (id: string) => {
+        await deleteData(`/parties/${id}`);
+        setParties(prev => prev.filter(party => (party._id || party.id) !== id));
     };
 
     // Broker Management
-    const addBroker = (broker: Omit<Broker, 'id'>) => {
-        const newBroker: Broker = { ...broker, id: `b${Date.now()}`};
+    const addBroker = async (broker: Omit<Broker, 'id'>) => {
+        const newBroker = await postData('/brokers', broker);
         setBrokers(prev => [newBroker, ...prev]);
     };
 
-    const updateBroker = (updatedBroker: Broker) => {
-        setBrokers(prev => prev.map(broker => broker.id === updatedBroker.id ? updatedBroker : broker));
+    const updateBroker = async (updatedBroker: Broker) => {
+        const broker = await putData(`/brokers/${updatedBroker._id || updatedBroker.id}`, updatedBroker);
+        setBrokers(prev => prev.map(b => (b._id || b.id) === (updatedBroker._id || updatedBroker.id) ? broker : b));
     };
 
-    const deleteBroker = (id: string) => {
-        setBrokers(prev => prev.filter(broker => broker.id !== id));
+    const deleteBroker = async (id: string) => {
+        await deleteData(`/brokers/${id}`);
+        setBrokers(prev => prev.filter(broker => (broker._id || broker.id) !== id));
     };
 
     // Payment Management
-    const addPayment = (payment: Omit<Payment, 'id'>) => {
-        const newPayment: Payment = { ...payment, id: `pay${Date.now()}`};
+    const addPayment = async (payment: Omit<Payment, 'id'>) => {
+        const newPayment = await postData('/payments', payment);
         setPayments(prev => [newPayment, ...prev]);
     };
 
-    const deletePayment = (id: string) => {
-        setPayments(prev => prev.filter(payment => payment.id !== id));
+    const deletePayment = async (id: string) => {
+        await deleteData(`/payments/${id}`);
+        setPayments(prev => prev.filter(payment => (payment._id || payment.id) !== id));
+    };
+
+    // Owner Management
+    const addOwner = async (owner: Omit<Owner, 'id'>) => {
+        const newOwner = await postData('/owners', owner);
+        setOwners(prev => [newOwner, ...prev]);
+    };
+
+    const updateOwner = async (updatedOwner: Owner) => {
+        const owner = await putData(`/owners/${updatedOwner._id || updatedOwner.id}`, updatedOwner);
+        setOwners(prev => prev.map(o => (o._id || o.id) === (updatedOwner._id || updatedOwner.id) ? owner : o));
+    };
+
+    const deleteOwner = async (id: string) => {
+        await deleteData(`/owners/${id}`);
+        setOwners(prev => prev.filter(owner => (owner._id || owner.id) !== id));
+    };
+
+    // Labour Management
+    const addLabour = async (labour: Omit<Labour, 'id'>) => {
+        const newLabour = await postData('/labours', labour);
+        setLabours(prev => [newLabour, ...prev]);
+    };
+
+    const updateLabour = async (updatedLabour: Labour) => {
+        const labour = await putData(`/labours/${updatedLabour._id || updatedLabour.id}`, updatedLabour);
+        setLabours(prev => prev.map(l => (l._id || l.id) === (updatedLabour._id || updatedLabour.id) ? labour : l));
+    };
+
+    const deleteLabour = async (id: string) => {
+        await deleteData(`/labours/${id}`);
+        setLabours(prev => prev.filter(labour => (labour._id || labour.id) !== id));
+    };
+
+    // ProductReceive Management
+    const addProductReceive = async (productReceive: Omit<ProductReceive, 'id'>) => {
+        const newProductReceive = await postData('/productReceives', productReceive);
+        setProductReceives(prev => [newProductReceive, ...prev]);
+    };
+
+    const updateProductReceive = async (updatedProductReceive: ProductReceive) => {
+        const productReceive = await putData(`/productReceives/${updatedProductReceive._id || updatedProductReceive.id}`, updatedProductReceive);
+        setProductReceives(prev => prev.map(pr => (pr._id || pr.id) === (updatedProductReceive._id || updatedProductReceive.id) ? productReceive : pr));
+    };
+
+    const deleteProductReceive = async (id: string) => {
+        await deleteData(`/productReceives/${id}`);
+        setProductReceives(prev => prev.filter(productReceive => (productReceive._id || productReceive.id) !== id));
     };
 
 
     return (
         <DataContext.Provider value={{
-            trips, parties, brokers, payments, userRole,
+            trips, parties, brokers, payments, owners, labours, productReceives, userRole, loading,
             addTrip, updateTrip, deleteTrip,
             addParty, updateParty, deleteParty,
             addBroker, updateBroker, deleteBroker,
             addPayment, deletePayment,
-            setUserRole
+            addOwner, updateOwner, deleteOwner,
+            addLabour, updateLabour, deleteLabour,
+            addProductReceive, updateProductReceive, deleteProductReceive,
+            setUserRole, refreshData
         }}>
             {children}
         </DataContext.Provider>

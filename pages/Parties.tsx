@@ -135,9 +135,15 @@ const Parties: React.FC = () => {
                             <div class="mb-8 grid grid-cols-2 gap-x-8 gap-y-2">
                                 <h2 class="col-span-2 text-xl font-semibold text-gray-700 mb-2">Party Details</h2>
                                 <div><strong>Name:</strong> ${party.name}</div>
-                                <div><strong>Contact:</strong> ${party.contact || 'N/A'}</div>
+                                <div><strong>Contact Person:</strong> ${party.contact || 'N/A'}</div>
+                                <div><strong>Phone:</strong> ${party.phone || 'N/A'}</div>
+                                <div><strong>Email:</strong> ${party.email || 'N/A'}</div>
                                 <div><strong>Type:</strong> ${party.type}</div>
                                 <div><strong>Address:</strong> ${party.address || 'N/A'}</div>
+                                <div><strong>City:</strong> ${party.city || 'N/A'}</div>
+                                <div><strong>Business Type:</strong> ${party.businessType || 'N/A'}</div>
+                                <div><strong>GST Number:</strong> ${party.gstNumber || 'N/A'}</div>
+                                <div><strong>PAN Number:</strong> ${party.panNumber || 'N/A'}</div>
                             </div>
                             
                             ${tripsTable}
@@ -280,14 +286,38 @@ const Parties: React.FC = () => {
                         </button>
                     </div>
                     <div className="p-6 overflow-y-auto flex-1">
-                        <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                         <div className="bg-gray-50 p-4 rounded-lg">
-                            <p className="font-semibold text-gray-600">Contact</p>
+                            <p className="font-semibold text-gray-600">Contact Person</p>
                             <p className="text-gray-800">{viewingParty.contact || 'N/A'}</p>
+                        </div>
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <p className="font-semibold text-gray-600">Phone</p>
+                            <p className="text-gray-800">{viewingParty.phone || 'N/A'}</p>
+                        </div>
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <p className="font-semibold text-gray-600">Email</p>
+                            <p className="text-gray-800">{viewingParty.email || 'N/A'}</p>
                         </div>
                         <div className="bg-gray-50 p-4 rounded-lg">
                             <p className="font-semibold text-gray-600">Address</p>
                             <p className="text-gray-800">{viewingParty.address || 'N/A'}</p>
+                        </div>
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <p className="font-semibold text-gray-600">City</p>
+                            <p className="text-gray-800">{viewingParty.city || 'N/A'}</p>
+                        </div>
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <p className="font-semibold text-gray-600">Business Type</p>
+                            <p className="text-gray-800">{viewingParty.businessType || 'N/A'}</p>
+                        </div>
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <p className="font-semibold text-gray-600">GST Number</p>
+                            <p className="text-gray-800">{viewingParty.gstNumber || 'N/A'}</p>
+                        </div>
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <p className="font-semibold text-gray-600">PAN Number</p>
+                            <p className="text-gray-800">{viewingParty.panNumber || 'N/A'}</p>
                         </div>
                         <div className="bg-primary/10 p-4 rounded-lg text-center">
                             <p className="font-semibold text-primary">Outstanding Balance</p>
