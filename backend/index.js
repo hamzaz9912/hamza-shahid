@@ -6,8 +6,10 @@ require('dotenv').config();
 
 const app = express();
 
-// Connect to database
-connectDB();
+// Connect to database (non-blocking for development)
+connectDB().catch(() => {
+  console.log('⚠️  Database connection failed, but server will continue for API testing');
+});
 
 // Middleware
 app.use(cors());

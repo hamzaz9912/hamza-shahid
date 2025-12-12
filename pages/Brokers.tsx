@@ -1,12 +1,17 @@
 import React, { useState, useMemo } from 'react';
-import { useData } from '../context/DataContext';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { Broker, Trip } from '../types';
 import BrokerForm from '../components/BrokerForm';
 import ConfirmationModal from '../components/ConfirmationModal';
 import TripForm from '../components/TripForm';
+import { deleteBroker } from '../store/slices/brokersSlice';
+import { deleteTrip } from '../store/slices/tripsSlice';
 
 const Brokers: React.FC = () => {
-    const { brokers, deleteBroker, userRole, trips, deleteTrip } = useData();
+    const dispatch = useAppDispatch();
+    const { brokers } = useAppSelector(state => state.brokers);
+    const { trips } = useAppSelector(state => state.trips);
+    const { userRole } = useAppSelector(state => state.ui);
     const [isBrokerFormOpen, setIsBrokerFormOpen] = useState(false);
     const [isTripFormOpen, setIsTripFormOpen] = useState(false);
 
@@ -56,7 +61,7 @@ const Brokers: React.FC = () => {
 
     const handleConfirmBrokerDelete = () => {
         if (deletingBroker) {
-            deleteBroker(deletingBroker.id);
+            dispatch(deleteBroker(deletingBroker.id || deletingBroker._id));
         }
     };
 
@@ -76,7 +81,7 @@ const Brokers: React.FC = () => {
 
     const handleConfirmTripDelete = () => {
         if(deletingTripId) {
-            deleteTrip(deletingTripId);
+            dispatch(deleteTrip(deletingTripId));
         }
     };
 

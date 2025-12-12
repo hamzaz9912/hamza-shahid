@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Broker } from '../types';
-import { useData } from '../context/DataContext';
+import { useAppDispatch } from '../store/hooks';
+import { createBroker, updateBroker } from '../store/slices/brokersSlice';
 
 interface BrokerFormProps {
     broker: Broker | null;
@@ -9,7 +10,7 @@ interface BrokerFormProps {
 }
 
 const BrokerForm: React.FC<BrokerFormProps> = ({ broker, onClose }) => {
-    const { addBroker, updateBroker } = useData();
+    const dispatch = useAppDispatch();
     const [formData, setFormData] = useState<Omit<Broker, 'id'>>({
         name: '',
         commission: 0,
@@ -38,9 +39,9 @@ const BrokerForm: React.FC<BrokerFormProps> = ({ broker, onClose }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (broker) {
-            updateBroker({ ...formData, id: broker.id });
+            dispatch(updateBroker({ id: broker.id || broker._id, broker: { ...formData, id: broker.id } }));
         } else {
-            addBroker(formData);
+            dispatch(createBroker(formData));
         }
         onClose();
     };
