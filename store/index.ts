@@ -7,6 +7,7 @@ import laboursReducer from '././slices/laboursSlice';
 import productReceivesReducer from '././slices/productReceivesSlice';
 import paymentsReducer from '././slices/paymentsSlice';
 import uiReducer from './slices/uiSlice';
+import authReducer from './slices/authSlice';
 
 const rootReducer = combineReducers({
   trips: tripsReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   productReceives: productReceivesReducer,
   payments: paymentsReducer,
   ui: uiReducer,
+  auth: authReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

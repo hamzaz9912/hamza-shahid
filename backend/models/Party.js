@@ -13,7 +13,7 @@ const partySchema = new mongoose.Schema({
   },
   contact: {
     type: String,
-    required: true
+    default: ''
   },
   phone: {
     type: String,
@@ -25,7 +25,7 @@ const partySchema = new mongoose.Schema({
   },
   address: {
     type: String,
-    required: true
+    default: ''
   },
   city: {
     type: String,

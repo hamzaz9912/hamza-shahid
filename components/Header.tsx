@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { useData } from '../context/DataContext';
-import { UserRole } from '../types';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { logout } from '../store/slices/authSlice';
 
 interface HeaderProps {
     title: string;
@@ -9,7 +9,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title, onMenuClick }) => {
-    const { userRole, setUserRole } = useData();
+    const dispatch = useAppDispatch();
+    const { user } = useAppSelector(state => state.auth);
 
     return (
         <header className="bg-white/80 backdrop-blur-lg shadow-lg border-b border-slate-200/50 h-auto md:h-20 flex flex-col md:flex-row items-start md:items-center justify-between p-6 flex-shrink-0 gap-4 md:gap-0">
@@ -36,31 +37,22 @@ const Header: React.FC<HeaderProps> = ({ title, onMenuClick }) => {
                     </div>
                 </div>
 
-                {/* User Role Selector */}
-                <div className="relative">
-                    <select
-                        value={userRole}
-                        onChange={(e) => setUserRole(e.target.value as UserRole)}
-                        className="appearance-none bg-white border border-slate-300 rounded-lg py-2.5 pl-4 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm hover:border-slate-400 transition-colors"
-                    >
-                        <option value="Admin">👑 Admin</option>
-                        <option value="Staff">👤 Staff</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
-                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                        </svg>
-                    </div>
-                </div>
+                {/* Logout Button */}
+                <button
+                    onClick={() => dispatch(logout())}
+                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                >
+                    Logout
+                </button>
 
                 {/* Welcome Message */}
                 <div className="hidden md:flex items-center space-x-2">
                     <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-bold">
-                            {userRole === 'Admin' ? 'A' : 'S'}
+                            {user?.role === 'Admin' ? 'A' : 'S'}
                         </span>
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Welcome, {userRole}</span>
+                    <span className="text-sm font-medium text-slate-600">Welcome, {user?.username} ({user?.role})</span>
                 </div>
             </div>
         </header>

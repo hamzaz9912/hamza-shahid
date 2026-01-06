@@ -1,13 +1,15 @@
 import { Trip, Party, Broker, Payment, Owner, Labour, ProductReceive } from '../types';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 class ApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
+    const token = localStorage.getItem('token');
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options?.headers,
       },
       ...options,
@@ -186,6 +188,18 @@ class ApiService {
     return this.request(`/productReceives/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  // Auth
+  async login(username: string, password: string): Promise<{ token: string; user: any }> {
+    return this.request('/users/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    });
+  }
+
+  async getCurrentUser(): Promise<any> {
+    return this.request('/users/me');
   }
 }
 

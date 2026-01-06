@@ -1,5 +1,5 @@
 import React from 'react';
-import { useData } from '../context/DataContext';
+import { useAppSelector } from '../store/hooks';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 
 // Fix: Replaced JSX.Element with React.ReactNode to resolve "Cannot find namespace 'JSX'" error.
@@ -37,7 +37,12 @@ const StatCard: React.FC<{ title: string; value: string; subtitle?: string; icon
 };
 
 const Dashboard: React.FC = () => {
-    const { trips, parties, brokers, owners, labours, productReceives } = useData();
+    const trips = useAppSelector(state => state.trips.trips);
+    const parties = useAppSelector(state => state.parties.parties);
+    const brokers = useAppSelector(state => state.brokers.brokers);
+    const owners = useAppSelector(state => state.owners.owners);
+    const labours = useAppSelector(state => state.labours.labours);
+    const productReceives = useAppSelector(state => state.productReceives.productReceives);
 
     // Financial Metrics
     const totalRevenue = trips.reduce((acc, trip) => acc + trip.freight, 0);
@@ -340,7 +345,7 @@ const Dashboard: React.FC = () => {
                         Top Parties
                     </h3>
                     <div className="space-y-3">
-                        {parties.sort((a,b) => b.outstandingBalance - a.outstandingBalance).slice(0, 3).map((party, index) => (
+                        {[...parties].sort((a,b) => b.outstandingBalance - a.outstandingBalance).slice(0, 3).map((party, index) => (
                             <div key={party.id} className="flex justify-between items-center">
                                 <div className="flex items-center gap-2">
                                     <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">

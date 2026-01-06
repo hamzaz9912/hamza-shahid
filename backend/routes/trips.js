@@ -29,7 +29,12 @@ router.get('/:id', async (req, res) => {
 // POST /api/trips - Create new trip
 router.post('/', async (req, res) => {
   try {
-    const trip = new Trip(req.body);
+    // Generate serial number
+    const lastTrip = await Trip.findOne().sort({ serialNumber: -1 });
+    const nextSerialNumber = lastTrip ? lastTrip.serialNumber + 1 : 1;
+
+    const tripData = { ...req.body, serialNumber: nextSerialNumber };
+    const trip = new Trip(tripData);
     const savedTrip = await trip.save();
     res.status(201).json(savedTrip);
   } catch (error) {

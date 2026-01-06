@@ -29,10 +29,12 @@ router.get('/:id', async (req, res) => {
 // POST /api/parties - Create new party
 router.post('/', async (req, res) => {
   try {
+    console.log('Received party data:', req.body);
     const party = new Party(req.body);
     const savedParty = await party.save();
     res.status(201).json(savedParty);
   } catch (error) {
+    console.log('Error saving party:', error);
     res.status(400).json({ message: error.message });
   }
 });

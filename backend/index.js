@@ -24,6 +24,9 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/owners', require('./routes/owners'));
 app.use('/api/labours', require('./routes/labours'));
 app.use('/api/productReceives', require('./routes/productReceives'));
+console.log('Loading users route...');
+app.use('/api/users', require('./routes/users'));
+console.log('Users route loaded');
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isOpen, 
     };
 
     return (
-        <aside className={`fixed top-0 left-0 h-full bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white transition-all duration-300 z-30 shadow-2xl border-r border-slate-700
+        <aside className={`fixed top-0 left-0 h-full bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white transition-all duration-300 z-30 shadow-2xl border-r border-slate-700 hidden md:block
             ${isOpen ? 'w-64 translate-x-0' : 'w-16 translate-x-0'}`}>
             <div className="flex flex-col h-full overflow-y-auto">
                 {/* Logo Section */}

@@ -8,7 +8,7 @@ const tripSchema = new mongoose.Schema({
   },
   driverNumber: {
     type: String,
-    required: true
+    default: ''
   },
   date: {
     type: String,
@@ -20,71 +20,75 @@ const tripSchema = new mongoose.Schema({
   },
   vehicleSize: {
     type: String,
-    required: true
+    default: ''
   },
   weight: {
     type: Number,
-    required: true
+    default: 0
   },
   freight: {
     type: Number,
-    required: true
+    default: 0
   },
   officeFare: {
     type: Number,
-    required: true
+    default: 0
   },
   vehicleReceivedBilty: {
     type: Number,
-    required: true
+    default: 0
   },
   vehicleFare: {
     type: Number,
-    required: true
+    default: 0
   },
   laborCharges: {
     type: Number,
-    required: true
+    default: 0
   },
   exciseCharges: {
     type: Number,
-    required: true
+    default: 0
   },
   bonus: {
     type: Number,
-    required: true
+    default: 0
   },
   miscExpenses: {
     type: Number,
-    required: true
+    default: 0
   },
   dailyWages: {
     type: Number,
-    required: true
+    default: 0
   },
   extraWeight: {
     type: Number,
-    required: true
+    default: 0
+  },
+  mt: {
+    type: Number,
+    default: 0
   },
   partyBalance: {
     type: Number,
-    required: true
+    default: 0
   },
   partyReceived: {
     type: Number,
-    required: true
+    default: 0
   },
   brokerageCommission: {
     type: Number,
-    required: true
+    default: 0
   },
   vehicleBalance: {
     type: Number,
-    required: true
+    default: 0
   },
   vehicleAccount: {
     type: String,
-    required: true
+    default: ''
   },
   additionalDetails: {
     type: String,
@@ -92,7 +96,7 @@ const tripSchema = new mongoose.Schema({
   },
   station: {
     type: String,
-    required: true
+    default: ''
   },
   brokerName: {
     type: String,

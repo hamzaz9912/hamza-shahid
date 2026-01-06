@@ -53,7 +53,7 @@ const PartyForm: React.FC<PartyFormProps> = ({ party, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 p-2 sm:p-4">
             <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-xl w-full max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
                 <div className="p-3 sm:p-4 md:p-6 border-b">
                     <h2 className="text-lg sm:text-xl font-bold text-gray-900">{party ? 'Edit Party' : 'Add New Party'}</h2>

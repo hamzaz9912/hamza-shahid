@@ -18,7 +18,7 @@ const brokerSchema = new mongoose.Schema({
   },
   station: {
     type: String,
-    required: true
+    default: ''
   },
   debit: {
     type: Number,

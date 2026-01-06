@@ -4,6 +4,7 @@ const Trip = require('./models/Trip');
 const Party = require('./models/Party');
 const Broker = require('./models/Broker');
 const Payment = require('./models/Payment');
+const User = require('./models/User');
 
 const connectDB = async () => {
   try {
@@ -18,10 +19,42 @@ const connectDB = async () => {
 const seedData = async () => {
   try {
     // Clear existing data
+    await User.deleteMany({});
     await Trip.deleteMany({});
     await Party.deleteMany({});
     await Broker.deleteMany({});
     await Payment.deleteMany({});
+
+    // Seed users
+    const adminUser = new User({
+      username: 'admin',
+      password: 'admin123',
+      role: 'Admin',
+      permissions: {
+        canEditTrips: true,
+        canDeleteTrips: true,
+        canManageParties: true,
+        canManageBrokers: true,
+        canManageOwners: true,
+        canViewReports: true
+      }
+    });
+    await adminUser.save();
+
+    const staffUser = new User({
+      username: 'staff',
+      password: 'staff123',
+      role: 'Staff',
+      permissions: {
+        canEditTrips: false,
+        canDeleteTrips: false,
+        canManageParties: false,
+        canManageBrokers: false,
+        canManageOwners: false,
+        canViewReports: false
+      }
+    });
+    await staffUser.save();
 
     // Seed parties
     const parties = await Party.insertMany([
@@ -93,6 +126,90 @@ const seedData = async () => {
         brokerName: 'Madina Cargo Services',
         partyName: 'Local Goods Co.',
         mt: 15,
+      },
+      {
+        serialNumber: 1003,
+        driverNumber: 'D-101',
+        date: '2023-10-28',
+        vehicleNumber: 'TR-54321',
+        vehicleSize: '30ft',
+        weight: 20,
+        freight: 95000,
+        officeFare: 4000,
+        vehicleReceivedBilty: 90000,
+        vehicleFare: 85000,
+        laborCharges: 1800,
+        exciseCharges: 1200,
+        bonus: 800,
+        miscExpenses: 400,
+        dailyWages: 700,
+        extraWeight: 1.5,
+        partyBalance: 8000,
+        partyReceived: 90000,
+        brokerageCommission: 4275,
+        vehicleBalance: 3000,
+        vehicleAccount: 'AC-V3',
+        additionalDetails: 'Fragile items',
+        station: 'North Hub',
+        brokerName: 'Al-Fatah Goods Carrier',
+        partyName: 'Global Exports Inc.',
+        mt: 20,
+      },
+      {
+        serialNumber: 1004,
+        driverNumber: 'D-202',
+        date: '2023-10-29',
+        vehicleNumber: 'TR-09876',
+        vehicleSize: '40ft',
+        weight: 28,
+        freight: 135000,
+        officeFare: 5500,
+        vehicleReceivedBilty: 125000,
+        vehicleFare: 115000,
+        laborCharges: 2200,
+        exciseCharges: 1600,
+        bonus: 1200,
+        miscExpenses: 600,
+        dailyWages: 900,
+        extraWeight: 2.5,
+        partyBalance: 12000,
+        partyReceived: 125000,
+        brokerageCommission: 6075,
+        vehicleBalance: 6000,
+        vehicleAccount: 'AC-V4',
+        additionalDetails: 'Heavy machinery',
+        station: 'South Terminal',
+        brokerName: 'Madina Cargo Services',
+        partyName: 'Local Goods Co.',
+        mt: 28,
+      },
+      {
+        serialNumber: 1005,
+        driverNumber: 'D-303',
+        date: '2023-10-30',
+        vehicleNumber: 'TR-13579',
+        vehicleSize: '20ft',
+        weight: 12,
+        freight: 65000,
+        officeFare: 2500,
+        vehicleReceivedBilty: 60000,
+        vehicleFare: 55000,
+        laborCharges: 1200,
+        exciseCharges: 800,
+        bonus: 400,
+        miscExpenses: 200,
+        dailyWages: 600,
+        extraWeight: 0.5,
+        partyBalance: 4000,
+        partyReceived: 60000,
+        brokerageCommission: 2925,
+        vehicleBalance: 1500,
+        vehicleAccount: 'AC-V5',
+        additionalDetails: 'Perishable goods',
+        station: 'North Hub',
+        brokerName: 'Al-Fatah Goods Carrier',
+        partyName: 'One-Time Shipment',
+        mt: 12,
       },
     ]);
 

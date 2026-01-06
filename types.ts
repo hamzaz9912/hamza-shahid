@@ -18,6 +18,7 @@ export interface Trip {
   miscExpenses: number;
   dailyWages: number;
   extraWeight: number;
+  mt: number;
   partyBalance: number;
   partyReceived: number;
   brokerageCommission: number;
@@ -129,6 +130,29 @@ export interface ProductReceive {
     productType: string;
     truckDimensions: string;
     description: string;
+}
+
+export interface User {
+    id?: string;
+    _id?: string;
+    username: string;
+    role: 'Admin' | 'Staff';
+    permissions: {
+        canEditTrips: boolean;
+        canDeleteTrips: boolean;
+        canManageParties: boolean;
+        canManageBrokers: boolean;
+        canManageOwners: boolean;
+        canViewReports: boolean;
+    };
+    isActive: boolean;
+}
+
+export interface AuthState {
+    user: User | null;
+    token: string | null;
+    isAuthenticated: boolean;
+    loading: boolean;
 }
 
 export type UserRole = 'Admin' | 'Staff';
